@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptArchive</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Separate first. Integrate later.</p>
+                <h1>PromptArchive <span>v1</span></h1>
+                <p class="subhead">Build prompts like a creative playground, then keep the ones worth reusing.</p>
+            </div>
+        </header>
+
+        <main class="main-grid">
+            <section class="panel builder-panel">
+                <div class="panel-header">
+                    <h2>Prompt Builder</h2>
+                    <button type="button" id="surpriseBtn" class="ghost-btn">🎲 Surprise Me</button>
+                </div>
+
+                <form id="promptForm" method="post" action="{{ url_for('save_prompt') }}">
+                    <div class="form-grid">
+                        <div class="field full">
+                            <label for="title">Title</label>
+                            <input type="text" id="title" name="title" placeholder="Optional custom title">
+                        </div>
+
+                        <div class="field full">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" placeholder="e.g. confident woman, fantasy warrior, luxury model" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="lighting">Lighting</label>
+                            <select id="lighting" name="lighting">
+                                <option>soft natural lighting</option>
+                                <option>dramatic studio lighting</option>
+                                <option>glowing golden hour lighting</option>
+                                <option>soft diffused window light</option>
+                                <option>moody cinematic lighting</option>
+                                <option>high-contrast editorial lighting</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="camera">Camera</label>
+                            <select id="camera" name="camera">
+                                <option>85mm portrait lens</option>
+                                <option>50mm prime lens</option>
+                                <option>iPhone photo look</option>
+                                <option>cinematic anamorphic lens</option>
+                                <option>high-end fashion editorial camera setup</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="environment">Environment</label>
+                            <input type="text" id="environment" name="environment" placeholder="e.g. rooftop garden, luxury bedroom, beach boardwalk">
+                        </div>
+
+                        <div class="field">
+                            <label for="time_of_day">Time of day</label>
+                            <select id="time_of_day" name="time_of_day">
+                                <option>golden hour</option>
+                                <option>morning</option>
+                                <option>afternoon</option>
+                                <option>sunset</option>
+                                <option>blue hour</option>
+                                <option>night</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="hair_length">Hair length</label>
+                            <select id="hair_length" name="hair_length">
+                                <option>short</option>
+                                <option>medium-length</option>
+                                <option selected>long</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="hair_style">Hairstyle</label>
+                            <select id="hair_style" name="hair_style">
+                                <option>sleek straight</option>
+                                <option selected>soft wavy</option>
+                                <option>loose curls</option>
+                                <option>messy bun</option>
+                                <option>high ponytail</option>
+                                <option>side-swept layers</option>
+                                <option>romantic updo</option>
+                                <option>braided</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="hair_color">Hair color</label>
+                            <input type="text" id="hair_color" name="hair_color" placeholder="e.g. dark brown with blonde highlights">
+                        </div>
+
+                        <div class="field">
+                            <label for="outfit_type">Outfit type</label>
+                            <select id="outfit_type" name="outfit_type">
+                                <option>dress</option>
+                                <option>blazer ensemble</option>
+                                <option>swimsuit</option>
+                                <option>casual outfit</option>
+                                <option>gown</option>
+                                <option>streetwear look</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="outfit_style">Outfit style</label>
+                            <select id="outfit_style" name="outfit_style">
+                                <option>elegant</option>
+                                <option>glamorous</option>
+                                <option>editorial</option>
+                                <option>cozy</option>
+                                <option>tailored</option>
+                                <option>sporty</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="outfit_color">Outfit color</label>
+                            <input type="text" id="outfit_color" name="outfit_color" placeholder="e.g. black, blush pink, ivory">
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="button" id="copyBtn" class="ghost-btn">📋 Copy Prompt</button>
+                        <button type="submit" class="primary-btn">💾 Save Prompt</button>
+                    </div>
+
+                    <section class="output-panel">
+                        <div class="output-header">
+                            <h3>Generated Prompt</h3>
+                            <span id="copiedPill" class="copied-pill">Copied</span>
+                        </div>
+                        <textarea id="generatedPrompt" readonly></textarea>
+                    </section>
+                </form>
+            </section>
+
+            <section class="panel saved-panel">
+                <div class="panel-header">
+                    <h2>Saved Prompts</h2>
+                    <span class="count-pill">{{ prompts|length }} saved</span>
+                </div>
+
+                <div class="saved-list">
+                    {% if prompts %}
+                        {% for prompt in prompts %}
+                            <article class="prompt-card {% if prompt['is_favorite'] %}favorite{% endif %}">
+                                <div class="card-top">
+                                    <div>
+                                        <h3>{{ prompt["title"] }}</h3>
+                                        <p class="timestamp">{{ prompt["created_at"] }}</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="icon-btn favorite-toggle"
+                                        data-id="{{ prompt['id'] }}"
+                                        aria-label="Toggle favorite"
+                                    >
+                                        {% if prompt["is_favorite"] %}⭐{% else %}☆{% endif %}
+                                    </button>
+                                </div>
+
+                                <p class="snippet">{{ prompt["generated_prompt"] }}</p>
+
+                                <div class="chip-row">
+                                    <span class="chip">{{ prompt["time_of_day"] }}</span>
+                                    <span class="chip">{{ prompt["camera"] }}</span>
+                                    <span class="chip">{{ prompt["lighting"] }}</span>
+                                </div>
+
+                                <div class="card-actions">
+                                    <button type="button" class="ghost-btn load-btn" data-id="{{ prompt['id'] }}">Load</button>
+                                    <form method="post" action="{{ url_for('delete_prompt', prompt_id=prompt['id']) }}" onsubmit="return confirm('Delete this prompt?');">
+                                        <button type="submit" class="danger-btn">Delete</button>
+                                    </form>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <p>No saved prompts yet.</p>
+                            <span>Build one on the left and save your first keeper ✨</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
