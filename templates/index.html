@@ -11,7 +11,7 @@
         <header class="topbar">
             <div>
                 <p class="eyebrow">Separate first. Integrate later.</p>
-                <h1>PromptArchive <span>v1.1</span></h1>
+                <h1>PromptArchive <span>v1.2</span></h1>
                 <p class="subhead">Build prompts like a creative playground, then keep the ones worth reusing.</p>
             </div>
         </header>
@@ -33,7 +33,7 @@
                         <div class="field">
                             <label for="subject_type">Subject Type</label>
                             <select id="subject_type" name="subject_type">
-                                <option value="">-- Select Subject --</option>
+                                <option value="">-- Select Subject Type --</option>
                                 <option>Portrait</option>
                                 <option>Fashion</option>
                                 <option>Fantasy</option>
@@ -43,9 +43,42 @@
                             </select>
                         </div>
 
+                        <div class="field">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender">
+                                <option value="">-- Select Gender --</option>
+                                <option>Woman</option>
+                                <option>Man</option>
+                                <option>Non-binary</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="shot_type">Shot Type</label>
+                            <select id="shot_type" name="shot_type">
+                                <option value="">-- Select Shot Type --</option>
+                                <option>Extreme close-up</option>
+                                <option>Headshot</option>
+                                <option>Tight portrait</option>
+                                <option>Chest-up</option>
+                                <option>Waist-up</option>
+                                <option>3/4 body</option>
+                                <option>Full body</option>
+                                <option>Wide shot</option>
+                                <option>Environmental portrait</option>
+                                <option>Over-the-shoulder</option>
+                                <option>Dynamic angle shot</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="locale">Locale</label>
+                            <input type="text" id="locale" name="locale" placeholder="e.g. New York City, Tokyo, Paris, Austin">
+                        </div>
+
                         <div class="field full">
-                            <label for="subject">Subject</label>
-                            <input type="text" id="subject" name="subject" placeholder="e.g. confident woman, fantasy warrior, luxury model" required>
+                            <label for="subject">Subject Description</label>
+                            <input type="text" id="subject" name="subject" placeholder="e.g. confident business executive, fantasy warrior queen, luxury model">
                         </div>
 
                         <div class="field">
@@ -53,11 +86,20 @@
                             <select id="lighting" name="lighting">
                                 <option value="">-- Select Lighting --</option>
                                 <option>soft natural lighting</option>
-                                <option>dramatic studio lighting</option>
-                                <option>glowing golden hour lighting</option>
                                 <option>soft diffused window light</option>
-                                <option>moody cinematic lighting</option>
+                                <option>golden hour glow</option>
+                                <option>blue hour ambient light</option>
+                                <option>harsh midday sunlight</option>
+                                <option>overcast diffused light</option>
+                                <option>dramatic studio lighting</option>
                                 <option>high-contrast editorial lighting</option>
+                                <option>moody cinematic lighting</option>
+                                <option>low-key shadow lighting</option>
+                                <option>rim lighting</option>
+                                <option>backlit silhouette lighting</option>
+                                <option>neon night lighting</option>
+                                <option>candlelit warm glow</option>
+                                <option>soft beauty dish lighting</option>
                             </select>
                         </div>
 
@@ -67,9 +109,16 @@
                                 <option value="">-- Select Camera --</option>
                                 <option>85mm portrait lens</option>
                                 <option>50mm prime lens</option>
-                                <option>iPhone photo look</option>
-                                <option>cinematic anamorphic lens</option>
+                                <option>35mm cinematic lens</option>
+                                <option>24mm wide-angle lens</option>
+                                <option>telephoto compression lens</option>
+                                <option>shallow depth of field DSLR</option>
                                 <option>high-end fashion editorial camera setup</option>
+                                <option>cinematic anamorphic lens</option>
+                                <option>iPhone photo look</option>
+                                <option>documentary photo style</option>
+                                <option>film photography aesthetic</option>
+                                <option>medium format photography</option>
                             </select>
                         </div>
 
@@ -82,12 +131,17 @@
                             <label for="time_of_day">Time of day</label>
                             <select id="time_of_day" name="time_of_day">
                                 <option value="">-- Select Time of Day --</option>
-                                <option>golden hour</option>
+                                <option>early morning</option>
                                 <option>morning</option>
+                                <option>late morning</option>
                                 <option>afternoon</option>
+                                <option>golden hour</option>
                                 <option>sunset</option>
                                 <option>blue hour</option>
                                 <option>night</option>
+                                <option>midnight</option>
+                                <option>dawn</option>
+                                <option>dusk</option>
                             </select>
                         </div>
 
@@ -108,11 +162,20 @@
                                 <option>sleek straight</option>
                                 <option>soft wavy</option>
                                 <option>loose curls</option>
+                                <option>tight curls</option>
                                 <option>messy bun</option>
                                 <option>high ponytail</option>
+                                <option>low ponytail</option>
                                 <option>side-swept layers</option>
                                 <option>romantic updo</option>
                                 <option>braided</option>
+                                <option>braid crown</option>
+                                <option>long layered blowout</option>
+                                <option>shoulder-length bob</option>
+                                <option>short textured bob</option>
+                                <option>pixie cut</option>
+                                <option>voluminous curls</option>
+                                <option>wet look styling</option>
                             </select>
                         </div>
 
@@ -126,11 +189,19 @@
                             <select id="outfit_type" name="outfit_type">
                                 <option value="">-- Select Outfit Type --</option>
                                 <option>dress</option>
-                                <option>blazer ensemble</option>
-                                <option>swimsuit</option>
-                                <option>casual outfit</option>
                                 <option>gown</option>
+                                <option>cocktail dress</option>
+                                <option>summer dress</option>
+                                <option>blazer ensemble</option>
+                                <option>business suit</option>
                                 <option>streetwear look</option>
+                                <option>casual outfit</option>
+                                <option>athletic wear</option>
+                                <option>swimsuit</option>
+                                <option>eveningwear</option>
+                                <option>lingerie-inspired outfit</option>
+                                <option>jacket and jeans</option>
+                                <option>luxury fashion outfit</option>
                             </select>
                         </div>
 
@@ -141,9 +212,18 @@
                                 <option>elegant</option>
                                 <option>glamorous</option>
                                 <option>editorial</option>
-                                <option>cozy</option>
                                 <option>tailored</option>
+                                <option>cozy</option>
                                 <option>sporty</option>
+                                <option>chic</option>
+                                <option>edgy</option>
+                                <option>minimalist</option>
+                                <option>romantic</option>
+                                <option>luxury</option>
+                                <option>bohemian</option>
+                                <option>casual chic</option>
+                                <option>high fashion</option>
+                                <option>avant-garde</option>
                             </select>
                         </div>
 
@@ -207,9 +287,21 @@
                                 <p class="negative-snippet"><strong>Negative:</strong> {{ prompt["negative_prompt"] }}</p>
 
                                 <div class="chip-row">
-                                    <span class="chip">{{ prompt["subject_type"] }}</span>
-                                    <span class="chip">{{ prompt["time_of_day"] }}</span>
-                                    <span class="chip">{{ prompt["camera"] }}</span>
+                                    {% if prompt["subject_type"] %}
+                                        <span class="chip">{{ prompt["subject_type"] }}</span>
+                                    {% endif %}
+                                    {% if prompt["gender"] %}
+                                        <span class="chip">{{ prompt["gender"] }}</span>
+                                    {% endif %}
+                                    {% if prompt["shot_type"] %}
+                                        <span class="chip">{{ prompt["shot_type"] }}</span>
+                                    {% endif %}
+                                    {% if prompt["locale"] %}
+                                        <span class="chip">{{ prompt["locale"] }}</span>
+                                    {% endif %}
+                                    {% if prompt["time_of_day"] %}
+                                        <span class="chip">{{ prompt["time_of_day"] }}</span>
+                                    {% endif %}
                                 </div>
 
                                 <div class="card-actions">

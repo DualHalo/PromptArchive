@@ -4,9 +4,9 @@ const generatedNegativePrompt = document.getElementById("generatedNegativePrompt
 const copyBtn = document.getElementById("copyBtn");
 const copyNegativeBtn = document.getElementById("copyNegativeBtn");
 const surpriseBtn = document.getElementById("surpriseBtn");
+const clearBtn = document.getElementById("clearBtn");
 const copiedPill = document.getElementById("copiedPill");
 const copiedNegativePill = document.getElementById("copiedNegativePill");
-const clearBtn = document.getElementById("clearBtn");
 
 const surpriseSets = {
     subject_type: [
@@ -16,11 +16,29 @@ const surpriseSets = {
         "Lifestyle",
         "Group"
     ],
+    gender: [
+        "Woman",
+        "Man",
+        "Non-binary"
+    ],
+    shot_type: [
+        "Headshot",
+        "Portrait (Chest-Up)",
+        "3/4 Body",
+        "Full Body"
+    ],
+    locale: [
+        "New York City",
+        "Tokyo",
+        "Paris",
+        "Austin",
+        "Los Angeles"
+    ],
     subject: [
         "confident fashion model",
         "mysterious fantasy heroine",
         "luxury lifestyle influencer",
-        "elegant businesswoman",
+        "elegant business executive",
         "cinematic sci-fi protagonist"
     ],
     lighting: [
@@ -144,6 +162,31 @@ surpriseBtn.addEventListener("click", async () => {
     await refreshPrompt();
 });
 
+clearBtn.addEventListener("click", async () => {
+    if (!confirm("Clear all fields and start fresh?")) return;
+
+    Array.from(form.elements).forEach((el) => {
+        if (!el.name) return;
+
+        if (el.tagName === "INPUT") {
+            el.value = "";
+        }
+
+        if (el.tagName === "SELECT") {
+            el.selectedIndex = 0;
+        }
+
+        if (el.tagName === "TEXTAREA") {
+            el.value = "";
+        }
+    });
+
+    generatedPrompt.value = "";
+    generatedNegativePrompt.value = "";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
 document.querySelectorAll(".favorite-toggle").forEach((button) => {
     button.addEventListener("click", async () => {
         const promptId = button.dataset.id;
@@ -172,6 +215,9 @@ document.querySelectorAll(".load-btn").forEach((button) => {
         const mappings = [
             "title",
             "subject_type",
+            "gender",
+            "shot_type",
+            "locale",
             "subject",
             "lighting",
             "camera",
@@ -196,31 +242,6 @@ document.querySelectorAll(".load-btn").forEach((button) => {
         generatedNegativePrompt.value = prompt.negative_prompt || "";
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
-});
-
-clearBtn.addEventListener("click", () => {
-    if (!confirm("Clear all fields and start fresh?")) return;
-
-    Array.from(form.elements).forEach((el) => {
-        if (!el.name) return;
-
-        if (el.tagName === "INPUT") {
-            el.value = "";
-        }
-
-        if (el.tagName === "SELECT") {
-            el.selectedIndex = 0; // 👈 RIGHT HERE
-        }
-
-        if (el.tagName === "TEXTAREA") {
-            el.value = "";
-        }
-    });
-
-    generatedPrompt.value = "";
-    generatedNegativePrompt.value = "";
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 refreshPrompt();

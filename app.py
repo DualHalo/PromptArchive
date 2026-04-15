@@ -27,6 +27,9 @@ def init_db() -> None:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 subject_type TEXT NOT NULL DEFAULT 'Portrait',
+                gender TEXT NOT NULL DEFAULT '',
+                shot_type TEXT NOT NULL DEFAULT '',
+                locale TEXT NOT NULL DEFAULT '',
                 subject TEXT NOT NULL,
                 lighting TEXT NOT NULL,
                 camera TEXT NOT NULL,
@@ -51,15 +54,17 @@ def init_db() -> None:
             for row in conn.execute("PRAGMA table_info(prompts)").fetchall()
         }
 
-        if "subject_type" not in columns:
-            conn.execute(
-                "ALTER TABLE prompts ADD COLUMN subject_type TEXT NOT NULL DEFAULT 'Portrait'"
-            )
+        migrations = {
+            "subject_type": "ALTER TABLE prompts ADD COLUMN subject_type TEXT NOT NULL DEFAULT 'Portrait'",
+            "negative_prompt": "ALTER TABLE prompts ADD COLUMN negative_prompt TEXT NOT NULL DEFAULT ''",
+            "gender": "ALTER TABLE prompts ADD COLUMN gender TEXT NOT NULL DEFAULT ''",
+            "shot_type": "ALTER TABLE prompts ADD COLUMN shot_type TEXT NOT NULL DEFAULT ''",
+            "locale": "ALTER TABLE prompts ADD COLUMN locale TEXT NOT NULL DEFAULT ''",
+        }
 
-        if "negative_prompt" not in columns:
-            conn.execute(
-                "ALTER TABLE prompts ADD COLUMN negative_prompt TEXT NOT NULL DEFAULT ''"
-            )
+        for column_name, sql in migrations.items():
+            if column_name not in columns:
+                conn.execute(sql)
 
         conn.commit()
 
@@ -88,8 +93,22 @@ def compose_outfit(outfit_type: str, outfit_style: str, outfit_color: str) -> st
     return f"{article} " + " ".join(parts)
 
 
+def compose_subject(subject: str, gender: str) -> str:
+    if subject and gender:
+        return f"{gender.lower()} {subject}"
+    if subject:
+        return subject
+    if gender:
+        return gender.lower()
+    return ""
+
+
 def build_prompt(data: dict[str, str]) -> str:
     subject = clean_value(data.get("subject"))
+    subject_type = clean_value(data.get("subject_type"))
+    gender = clean_value(data.get("gender"))
+    shot_type = clean_value(data.get("shot_type"))
+    locale = clean_value(data.get("locale"))
     lighting = clean_value(data.get("lighting"))
     camera = clean_value(data.get("camera"))
     environment = clean_value(data.get("environment"))
@@ -106,6 +125,10 @@ def build_prompt(data: dict[str, str]) -> str:
     if not any(
         [
             subject,
+            subject_type,
+            gender,
+            shot_type,
+            locale,
             lighting,
             camera,
             environment,
@@ -120,15 +143,26 @@ def build_prompt(data: dict[str, str]) -> str:
     ):
         return ""
 
+    subject_text = compose_subject(subject, gender)
     hair = compose_hair(hair_length, hair_style, hair_color)
     outfit = compose_outfit(outfit_type, outfit_style, outfit_color)
 
     prompt_parts: list[str] = []
 
-    if subject:
-        prompt_parts.append(f"High-quality image of {subject}")
+    opening_bits = ["High-quality"]
+    if shot_type:
+        opening_bits.append(shot_type.lower())
+    opening_bits.append("image")
+
+    if subject_text:
+        opening = " ".join(opening_bits) + f" of {subject_text}"
     else:
-        prompt_parts.append("High-quality image")
+        opening = " ".join(opening_bits)
+
+    prompt_parts.append(opening)
+
+    if subject_type:
+        prompt_parts.append(f"styled for a {subject_type.lower()} concept")
 
     if outfit:
         prompt_parts.append(f"wearing {outfit}")
@@ -137,7 +171,12 @@ def build_prompt(data: dict[str, str]) -> str:
         prompt_parts.append(f"with {hair}")
 
     if environment:
-        prompt_parts.append(f"in {environment}")
+        environment_text = environment
+        if locale:
+            environment_text = f"{environment} in {locale}"
+        prompt_parts.append(f"in {environment_text}")
+    elif locale:
+        prompt_parts.append(f"set in {locale}")
 
     if time_of_day:
         prompt_parts.append(f"during {time_of_day}")
@@ -156,6 +195,9 @@ def build_prompt(data: dict[str, str]) -> str:
 def build_negative_prompt(data: dict[str, str]) -> str:
     subject = clean_value(data.get("subject")).lower()
     subject_type = clean_value(data.get("subject_type"))
+    gender = clean_value(data.get("gender")).lower()
+    shot_type = clean_value(data.get("shot_type")).lower()
+    locale = clean_value(data.get("locale")).lower()
 
     other_values = [
         clean_value(data.get("lighting")),
@@ -170,7 +212,7 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         clean_value(data.get("outfit_color")),
     ]
 
-    if not subject and not subject_type and not any(other_values):
+    if not subject and not subject_type and not gender and not shot_type and not locale and not any(other_values):
         return ""
 
     base_negatives = [
@@ -248,6 +290,19 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         "misaligned faces",
     ]
 
+    headshot_negatives = [
+        "cropped forehead",
+        "cut-off chin",
+        "bad facial crop",
+        "off-center face",
+    ]
+
+    three_quarter_negatives = [
+        "cropped legs",
+        "awkward torso proportions",
+        "broken arm positioning",
+    ]
+
     full_body_negatives = [
         "cropped feet",
         "missing legs",
@@ -255,6 +310,18 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         "broken posture",
         "unnatural stance",
     ]
+
+    locale_negatives = [
+        "generic background",
+        "inconsistent setting",
+        "mismatched location details",
+    ]
+
+    gender_negatives = {
+        "woman": ["masculine facial features", "masculine body proportions"],
+        "man": ["feminine facial features", "feminine body proportions"],
+        "non-binary": [],
+    }
 
     keyword_map = {
         "portrait": portrait_negatives,
@@ -277,6 +344,7 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         "group": group_negatives,
         "friends": group_negatives,
         "family": group_negatives,
+        "headshot": headshot_negatives,
         "full body": full_body_negatives,
     }
 
@@ -292,7 +360,20 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         "": [],
     }
 
+    shot_map = {
+        "Headshot": headshot_negatives,
+        "Portrait (Chest-Up)": portrait_negatives,
+        "3/4 Body": three_quarter_negatives,
+        "Full Body": full_body_negatives,
+        "": [],
+    }
+
     combined.extend(type_map.get(subject_type, []))
+    combined.extend(shot_map.get(clean_value(data.get("shot_type")), []))
+    combined.extend(gender_negatives.get(gender, []))
+
+    if locale:
+        combined.extend(locale_negatives)
 
     for keyword, negatives in keyword_map.items():
         if keyword in subject:
@@ -341,6 +422,9 @@ def save_prompt():
     form_data = {
         "title": clean_value(request.form.get("title")),
         "subject_type": clean_value(request.form.get("subject_type")),
+        "gender": clean_value(request.form.get("gender")),
+        "shot_type": clean_value(request.form.get("shot_type")),
+        "locale": clean_value(request.form.get("locale")),
         "subject": clean_value(request.form.get("subject")),
         "lighting": clean_value(request.form.get("lighting")),
         "camera": clean_value(request.form.get("camera")),
@@ -366,6 +450,9 @@ def save_prompt():
             INSERT INTO prompts (
                 title,
                 subject_type,
+                gender,
+                shot_type,
+                locale,
                 subject,
                 lighting,
                 camera,
@@ -381,11 +468,14 @@ def save_prompt():
                 negative_prompt,
                 created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 form_data["title"],
                 form_data["subject_type"],
+                form_data["gender"],
+                form_data["shot_type"],
+                form_data["locale"],
                 form_data["subject"],
                 form_data["lighting"],
                 form_data["camera"],
