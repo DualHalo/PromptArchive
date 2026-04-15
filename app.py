@@ -35,6 +35,8 @@ def init_db() -> None:
                 camera TEXT NOT NULL,
                 environment TEXT NOT NULL,
                 time_of_day TEXT NOT NULL,
+                eye_color TEXT NOT NULL DEFAULT '',
+                expression TEXT NOT NULL DEFAULT '',
                 hair_length TEXT NOT NULL,
                 hair_style TEXT NOT NULL,
                 hair_color TEXT NOT NULL,
@@ -60,6 +62,8 @@ def init_db() -> None:
             "gender": "ALTER TABLE prompts ADD COLUMN gender TEXT NOT NULL DEFAULT ''",
             "shot_type": "ALTER TABLE prompts ADD COLUMN shot_type TEXT NOT NULL DEFAULT ''",
             "locale": "ALTER TABLE prompts ADD COLUMN locale TEXT NOT NULL DEFAULT ''",
+            "eye_color": "ALTER TABLE prompts ADD COLUMN eye_color TEXT NOT NULL DEFAULT ''",
+            "expression": "ALTER TABLE prompts ADD COLUMN expression TEXT NOT NULL DEFAULT ''",
         }
 
         for column_name, sql in migrations.items():
@@ -114,6 +118,9 @@ def build_prompt(data: dict[str, str]) -> str:
     environment = clean_value(data.get("environment"))
     time_of_day = clean_value(data.get("time_of_day"))
 
+    eye_color = clean_value(data.get("eye_color"))
+    expression = clean_value(data.get("expression"))
+
     hair_length = clean_value(data.get("hair_length"))
     hair_style = clean_value(data.get("hair_style"))
     hair_color = clean_value(data.get("hair_color"))
@@ -133,6 +140,8 @@ def build_prompt(data: dict[str, str]) -> str:
             camera,
             environment,
             time_of_day,
+            eye_color,
+            expression,
             hair_length,
             hair_style,
             hair_color,
@@ -163,6 +172,12 @@ def build_prompt(data: dict[str, str]) -> str:
 
     if subject_type:
         prompt_parts.append(f"styled for a {subject_type.lower()} concept")
+
+    if eye_color:
+        prompt_parts.append(f"with {eye_color} eyes")
+
+    if expression:
+        prompt_parts.append(f"showing a {expression}")
 
     if outfit:
         prompt_parts.append(f"wearing {outfit}")
@@ -198,6 +213,8 @@ def build_negative_prompt(data: dict[str, str]) -> str:
     gender = clean_value(data.get("gender")).lower()
     shot_type = clean_value(data.get("shot_type")).lower()
     locale = clean_value(data.get("locale")).lower()
+    eye_color = clean_value(data.get("eye_color")).lower()
+    expression = clean_value(data.get("expression")).lower()
 
     other_values = [
         clean_value(data.get("lighting")),
@@ -212,7 +229,16 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         clean_value(data.get("outfit_color")),
     ]
 
-    if not subject and not subject_type and not gender and not shot_type and not locale and not any(other_values):
+    if (
+        not subject
+        and not subject_type
+        and not gender
+        and not shot_type
+        and not locale
+        and not eye_color
+        and not expression
+        and not any(other_values)
+    ):
         return ""
 
     base_negatives = [
@@ -317,9 +343,32 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         "mismatched location details",
     ]
 
+    expression_negatives = [
+        "awkward expression",
+        "unnatural facial expression",
+        "emotionless face",
+        "stiff face",
+    ]
+
     gender_negatives = {
-        "woman": ["masculine facial features", "masculine body proportions"],
-        "man": ["feminine facial features", "feminine body proportions"],
+        "woman": [
+            "masculine facial features",
+            "masculine body proportions",
+            "beard",
+            "mustache",
+            "masculine hairstyle",
+        ],
+        "man": [
+            "feminine facial features",
+            "feminine body proportions",
+            "dress",
+            "gown",
+            "skirt",
+            "high heels",
+            "cleavage",
+            "breasts",
+            "feminine hairstyle",
+        ],
         "non-binary": [],
     }
 
@@ -361,9 +410,14 @@ def build_negative_prompt(data: dict[str, str]) -> str:
     }
 
     shot_map = {
+        "Extreme close-up": headshot_negatives,
         "Headshot": headshot_negatives,
-        "Portrait (Chest-Up)": portrait_negatives,
+        "Tight portrait": portrait_negatives,
+        "Chest-up": portrait_negatives,
+        "Waist-up": three_quarter_negatives,
+        "3/4 body": three_quarter_negatives,
         "3/4 Body": three_quarter_negatives,
+        "Full body": full_body_negatives,
         "Full Body": full_body_negatives,
         "": [],
     }
@@ -374,6 +428,9 @@ def build_negative_prompt(data: dict[str, str]) -> str:
 
     if locale:
         combined.extend(locale_negatives)
+
+    if expression:
+        combined.extend(expression_negatives)
 
     for keyword, negatives in keyword_map.items():
         if keyword in subject:
@@ -430,6 +487,8 @@ def save_prompt():
         "camera": clean_value(request.form.get("camera")),
         "environment": clean_value(request.form.get("environment")),
         "time_of_day": clean_value(request.form.get("time_of_day")),
+        "eye_color": clean_value(request.form.get("eye_color")),
+        "expression": clean_value(request.form.get("expression")),
         "hair_length": clean_value(request.form.get("hair_length")),
         "hair_style": clean_value(request.form.get("hair_style")),
         "hair_color": clean_value(request.form.get("hair_color")),
@@ -458,6 +517,8 @@ def save_prompt():
                 camera,
                 environment,
                 time_of_day,
+                eye_color,
+                expression,
                 hair_length,
                 hair_style,
                 hair_color,
@@ -468,7 +529,7 @@ def save_prompt():
                 negative_prompt,
                 created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 form_data["title"],
@@ -481,6 +542,8 @@ def save_prompt():
                 form_data["camera"],
                 form_data["environment"],
                 form_data["time_of_day"],
+                form_data["eye_color"],
+                form_data["expression"],
                 form_data["hair_length"],
                 form_data["hair_style"],
                 form_data["hair_color"],

@@ -109,6 +109,20 @@ const surpriseSets = {
         "ivory",
         "emerald green",
         "deep navy"
+    ],
+    eye_color: [
+    "brown",
+    "hazel",
+    "green",
+    "blue",
+    "gray"
+    ],
+    expression: [
+        "soft smile",
+        "confident expression",
+        "playful expression",
+        "mysterious expression",
+        "intense gaze"
     ]
 };
 
@@ -228,7 +242,9 @@ document.querySelectorAll(".load-btn").forEach((button) => {
             "hair_color",
             "outfit_type",
             "outfit_style",
-            "outfit_color"
+            "outfit_color",
+            "eye_color",
+            "expression"
         ];
 
         mappings.forEach((key) => {
