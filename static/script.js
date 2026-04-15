@@ -1,10 +1,21 @@
 const form = document.getElementById("promptForm");
 const generatedPrompt = document.getElementById("generatedPrompt");
+const generatedNegativePrompt = document.getElementById("generatedNegativePrompt");
 const copyBtn = document.getElementById("copyBtn");
+const copyNegativeBtn = document.getElementById("copyNegativeBtn");
 const surpriseBtn = document.getElementById("surpriseBtn");
 const copiedPill = document.getElementById("copiedPill");
+const copiedNegativePill = document.getElementById("copiedNegativePill");
+const clearBtn = document.getElementById("clearBtn");
 
 const surpriseSets = {
+    subject_type: [
+        "Portrait",
+        "Fashion",
+        "Fantasy",
+        "Lifestyle",
+        "Group"
+    ],
     subject: [
         "confident fashion model",
         "mysterious fantasy heroine",
@@ -100,12 +111,13 @@ async function refreshPrompt() {
     });
 
     const data = await response.json();
-    generatedPrompt.value = data.prompt;
+    generatedPrompt.value = data.prompt || "";
+    generatedNegativePrompt.value = data.negative_prompt || "";
 }
 
-function flashCopied() {
-    copiedPill.classList.add("show");
-    window.setTimeout(() => copiedPill.classList.remove("show"), 1200);
+function flashPill(pill) {
+    pill.classList.add("show");
+    window.setTimeout(() => pill.classList.remove("show"), 1200);
 }
 
 form.addEventListener("input", refreshPrompt);
@@ -113,7 +125,12 @@ form.addEventListener("change", refreshPrompt);
 
 copyBtn.addEventListener("click", async () => {
     await navigator.clipboard.writeText(generatedPrompt.value);
-    flashCopied();
+    flashPill(copiedPill);
+});
+
+copyNegativeBtn.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(generatedNegativePrompt.value);
+    flashPill(copiedNegativePill);
 });
 
 surpriseBtn.addEventListener("click", async () => {
@@ -154,6 +171,7 @@ document.querySelectorAll(".load-btn").forEach((button) => {
 
         const mappings = [
             "title",
+            "subject_type",
             "subject",
             "lighting",
             "camera",
@@ -174,9 +192,35 @@ document.querySelectorAll(".load-btn").forEach((button) => {
             }
         });
 
-        generatedPrompt.value = prompt.generated_prompt;
+        generatedPrompt.value = prompt.generated_prompt || "";
+        generatedNegativePrompt.value = prompt.negative_prompt || "";
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
+});
+
+clearBtn.addEventListener("click", () => {
+    if (!confirm("Clear all fields and start fresh?")) return;
+
+    Array.from(form.elements).forEach((el) => {
+        if (!el.name) return;
+
+        if (el.tagName === "INPUT") {
+            el.value = "";
+        }
+
+        if (el.tagName === "SELECT") {
+            el.selectedIndex = 0; // 👈 RIGHT HERE
+        }
+
+        if (el.tagName === "TEXTAREA") {
+            el.value = "";
+        }
+    });
+
+    generatedPrompt.value = "";
+    generatedNegativePrompt.value = "";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 refreshPrompt();

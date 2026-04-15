@@ -11,7 +11,7 @@
         <header class="topbar">
             <div>
                 <p class="eyebrow">Separate first. Integrate later.</p>
-                <h1>PromptArchive <span>v1</span></h1>
+                <h1>PromptArchive <span>v1.1</span></h1>
                 <p class="subhead">Build prompts like a creative playground, then keep the ones worth reusing.</p>
             </div>
         </header>
@@ -30,6 +30,19 @@
                             <input type="text" id="title" name="title" placeholder="Optional custom title">
                         </div>
 
+                        <div class="field">
+                            <label for="subject_type">Subject Type</label>
+                            <select id="subject_type" name="subject_type">
+                                <option value="">-- Select Subject --</option>
+                                <option>Portrait</option>
+                                <option>Fashion</option>
+                                <option>Fantasy</option>
+                                <option>Lifestyle</option>
+                                <option>Group</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+
                         <div class="field full">
                             <label for="subject">Subject</label>
                             <input type="text" id="subject" name="subject" placeholder="e.g. confident woman, fantasy warrior, luxury model" required>
@@ -38,6 +51,7 @@
                         <div class="field">
                             <label for="lighting">Lighting</label>
                             <select id="lighting" name="lighting">
+                                <option value="">-- Select Lighting --</option>
                                 <option>soft natural lighting</option>
                                 <option>dramatic studio lighting</option>
                                 <option>glowing golden hour lighting</option>
@@ -50,6 +64,7 @@
                         <div class="field">
                             <label for="camera">Camera</label>
                             <select id="camera" name="camera">
+                                <option value="">-- Select Camera --</option>
                                 <option>85mm portrait lens</option>
                                 <option>50mm prime lens</option>
                                 <option>iPhone photo look</option>
@@ -66,6 +81,7 @@
                         <div class="field">
                             <label for="time_of_day">Time of day</label>
                             <select id="time_of_day" name="time_of_day">
+                                <option value="">-- Select Time of Day --</option>
                                 <option>golden hour</option>
                                 <option>morning</option>
                                 <option>afternoon</option>
@@ -78,17 +94,19 @@
                         <div class="field">
                             <label for="hair_length">Hair length</label>
                             <select id="hair_length" name="hair_length">
+                                <option value="">-- Select Hair Length --</option>
                                 <option>short</option>
                                 <option>medium-length</option>
-                                <option selected>long</option>
+                                <option>long</option>
                             </select>
                         </div>
 
                         <div class="field">
                             <label for="hair_style">Hairstyle</label>
                             <select id="hair_style" name="hair_style">
+                                <option value="">-- Select Hairstyle --</option>
                                 <option>sleek straight</option>
-                                <option selected>soft wavy</option>
+                                <option>soft wavy</option>
                                 <option>loose curls</option>
                                 <option>messy bun</option>
                                 <option>high ponytail</option>
@@ -106,6 +124,7 @@
                         <div class="field">
                             <label for="outfit_type">Outfit type</label>
                             <select id="outfit_type" name="outfit_type">
+                                <option value="">-- Select Outfit Type --</option>
                                 <option>dress</option>
                                 <option>blazer ensemble</option>
                                 <option>swimsuit</option>
@@ -118,6 +137,7 @@
                         <div class="field">
                             <label for="outfit_style">Outfit style</label>
                             <select id="outfit_style" name="outfit_style">
+                                <option value="">-- Select Outfit Style --</option>
                                 <option>elegant</option>
                                 <option>glamorous</option>
                                 <option>editorial</option>
@@ -134,7 +154,9 @@
                     </div>
 
                     <div class="actions">
+                        <button type="button" id="clearBtn" class="ghost-btn">🧼 Clear</button>
                         <button type="button" id="copyBtn" class="ghost-btn">📋 Copy Prompt</button>
+                        <button type="button" id="copyNegativeBtn" class="ghost-btn">🧹 Copy Negative</button>
                         <button type="submit" class="primary-btn">💾 Save Prompt</button>
                     </div>
 
@@ -144,6 +166,14 @@
                             <span id="copiedPill" class="copied-pill">Copied</span>
                         </div>
                         <textarea id="generatedPrompt" readonly></textarea>
+                    </section>
+
+                    <section class="output-panel">
+                        <div class="output-header">
+                            <h3>Generated Negative Prompt</h3>
+                            <span id="copiedNegativePill" class="copied-pill">Copied</span>
+                        </div>
+                        <textarea id="generatedNegativePrompt" readonly></textarea>
                     </section>
                 </form>
             </section>
@@ -174,11 +204,12 @@
                                 </div>
 
                                 <p class="snippet">{{ prompt["generated_prompt"] }}</p>
+                                <p class="negative-snippet"><strong>Negative:</strong> {{ prompt["negative_prompt"] }}</p>
 
                                 <div class="chip-row">
+                                    <span class="chip">{{ prompt["subject_type"] }}</span>
                                     <span class="chip">{{ prompt["time_of_day"] }}</span>
                                     <span class="chip">{{ prompt["camera"] }}</span>
-                                    <span class="chip">{{ prompt["lighting"] }}</span>
                                 </div>
 
                                 <div class="card-actions">
