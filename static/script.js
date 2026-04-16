@@ -8,126 +8,259 @@ const clearBtn = document.getElementById("clearBtn");
 const copiedPill = document.getElementById("copiedPill");
 const copiedNegativePill = document.getElementById("copiedNegativePill");
 
+const hairLengthSelect = document.getElementById("hair_length");
+const hairStyleSelect = document.getElementById("hair_style");
+const outfitTypeSelect = document.getElementById("outfit_type");
+const outfitStyleSelect = document.getElementById("outfit_style");
+const genderSelect = document.getElementById("gender");
+
+const optionPools = {
+    hairLength: {
+        default: ["short", "medium-length", "long"],
+        woman: ["medium-length", "long"],
+        man: ["short", "medium-length"],
+        "non-binary": ["short", "medium-length", "long"]
+    },
+    hairStyle: {
+        default: [
+            "sleek straight",
+            "soft wavy",
+            "loose curls",
+            "messy bun",
+            "side-swept layers",
+            "braided"
+        ],
+        woman: [
+            "sleek straight",
+            "soft wavy",
+            "loose curls",
+            "messy bun",
+            "high ponytail",
+            "low ponytail",
+            "side-swept layers",
+            "romantic updo",
+            "braid crown",
+            "long layered blowout",
+            "shoulder-length bob",
+            "voluminous curls"
+        ],
+        man: [
+            "short textured cut",
+            "side part",
+            "slicked back",
+            "pompadour",
+            "crew cut",
+            "taper fade",
+            "undercut",
+            "wavy medium cut"
+        ],
+        "non-binary": [
+            "sleek straight",
+            "soft wavy",
+            "short textured cut",
+            "side part",
+            "messy bun",
+            "braided",
+            "undercut",
+            "shoulder-length bob"
+        ]
+    },
+    outfitType: {
+        default: [
+            "structured blazer",
+            "streetwear look",
+            "casual outfit",
+            "athletic wear",
+            "luxury fashion outfit"
+        ],
+        woman: [
+            "dress",
+            "gown",
+            "cocktail dress",
+            "summer dress",
+            "blazer ensemble",
+            "streetwear look",
+            "casual outfit",
+            "athletic wear",
+            "eveningwear",
+            "luxury fashion outfit"
+        ],
+        man: [
+            "tailored suit",
+            "tuxedo",
+            "blazer and slacks",
+            "business suit",
+            "casual menswear",
+            "streetwear look",
+            "athletic wear",
+            "luxury fashion outfit"
+        ],
+        "non-binary": [
+            "structured blazer",
+            "tailored suit",
+            "streetwear look",
+            "casual outfit",
+            "athletic wear",
+            "luxury fashion outfit"
+        ]
+    },
+    outfitStyle: {
+        default: [
+            "elegant",
+            "editorial",
+            "tailored",
+            "minimalist",
+            "luxury"
+        ],
+        woman: [
+            "elegant",
+            "glamorous",
+            "editorial",
+            "tailored",
+            "chic",
+            "romantic",
+            "luxury",
+            "high fashion"
+        ],
+        man: [
+            "tailored",
+            "sharp",
+            "editorial",
+            "luxury",
+            "minimalist",
+            "classic",
+            "modern"
+        ],
+        "non-binary": [
+            "editorial",
+            "tailored",
+            "minimalist",
+            "luxury",
+            "avant-garde",
+            "modern"
+        ]
+    }
+};
+
 const surpriseSets = {
-    subject_type: [
-        "Portrait",
-        "Fashion",
-        "Fantasy",
-        "Lifestyle",
-        "Group"
-    ],
-    gender: [
-        "Woman",
-        "Man",
-        "Non-binary"
-    ],
+    subject_type: ["Portrait", "Fashion", "Fantasy", "Lifestyle", "Group"],
+    gender: ["Woman", "Man", "Non-binary"],
     shot_type: [
+        "Extreme close-up",
         "Headshot",
-        "Portrait (Chest-Up)",
-        "3/4 Body",
-        "Full Body"
+        "Tight portrait",
+        "Chest-up",
+        "Waist-up",
+        "3/4 body",
+        "Full body",
+        "Wide shot",
+        "Environmental portrait"
     ],
-    locale: [
-        "New York City",
-        "Tokyo",
-        "Paris",
-        "Austin",
-        "Los Angeles"
-    ],
+    locale: ["New York City", "Tokyo", "Paris", "Austin", "Los Angeles"],
     subject: [
-        "confident fashion model",
-        "mysterious fantasy heroine",
-        "luxury lifestyle influencer",
-        "elegant business executive",
-        "cinematic sci-fi protagonist"
+        "business executive",
+        "fantasy warrior",
+        "luxury model",
+        "cinematic protagonist",
+        "fashion editor"
     ],
     lighting: [
         "soft natural lighting",
-        "moody cinematic lighting",
-        "glowing golden hour lighting",
+        "soft diffused window light",
+        "golden hour glow",
         "dramatic studio lighting",
-        "soft diffused window light"
+        "moody cinematic lighting"
     ],
     camera: [
         "85mm portrait lens",
         "50mm prime lens",
-        "iPhone photo look",
+        "35mm cinematic lens",
         "cinematic anamorphic lens",
-        "high-end fashion editorial camera setup"
+        "medium format photography"
     ],
     environment: [
-        "lush botanical garden",
-        "luxury rooftop terrace",
         "modern apartment interior",
-        "sunlit beach boardwalk",
-        "moody candlelit lounge"
+        "luxury rooftop terrace",
+        "lush botanical garden",
+        "moody candlelit lounge",
+        "sunlit beach boardwalk"
     ],
-    time_of_day: [
-        "morning",
-        "afternoon",
-        "golden hour",
-        "sunset",
-        "night"
-    ],
-    hair_length: [
-        "short",
-        "medium-length",
-        "long"
-    ],
-    hair_style: [
-        "sleek straight",
-        "soft wavy",
-        "loose curls",
-        "messy bun",
-        "side-swept layers",
-        "romantic updo"
-    ],
-    hair_color: [
-        "dark brown with soft highlights",
-        "platinum blonde",
-        "jet black",
-        "warm auburn",
-        "chestnut brown"
-    ],
-    outfit_type: [
-        "dress",
-        "blazer ensemble",
-        "gown",
-        "casual outfit",
-        "streetwear look"
-    ],
-    outfit_style: [
-        "elegant",
-        "glamorous",
-        "editorial",
-        "tailored",
-        "cozy"
-    ],
-    outfit_color: [
-        "black",
-        "blush pink",
-        "ivory",
-        "emerald green",
-        "deep navy"
-    ],
-    eye_color: [
-    "brown",
-    "hazel",
-    "green",
-    "blue",
-    "gray"
-    ],
+    time_of_day: ["morning", "afternoon", "golden hour", "sunset", "night"],
+    eye_color: ["brown", "hazel", "green", "blue", "gray"],
     expression: [
         "soft smile",
         "confident expression",
         "playful expression",
         "mysterious expression",
         "intense gaze"
-    ]
+    ],
+    hair_color: [
+        "dark brown with soft highlights",
+        "jet black",
+        "warm auburn",
+        "chestnut brown",
+        "dark blonde"
+    ],
+    outfit_color: ["black", "charcoal", "navy", "ivory", "emerald green"]
 };
 
 function randomItem(items) {
     return items[Math.floor(Math.random() * items.length)];
+}
+
+function populateSelect(selectEl, placeholder, values, preserveValue = "") {
+    const currentValue = preserveValue || "";
+    selectEl.innerHTML = "";
+
+    const placeholderOption = document.createElement("option");
+    placeholderOption.value = "";
+    placeholderOption.textContent = placeholder;
+    selectEl.appendChild(placeholderOption);
+
+    values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        selectEl.appendChild(option);
+    });
+
+    if (currentValue && values.includes(currentValue)) {
+        selectEl.value = currentValue;
+    } else {
+        selectEl.value = "";
+    }
+}
+
+function applyGenderAwareOptions() {
+    const gender = genderSelect.value.toLowerCase() || "default";
+
+    populateSelect(
+        hairLengthSelect,
+        "-- Select Hair Length --",
+        optionPools.hairLength[gender] || optionPools.hairLength.default,
+        hairLengthSelect.value
+    );
+
+    populateSelect(
+        hairStyleSelect,
+        "-- Select Hairstyle --",
+        optionPools.hairStyle[gender] || optionPools.hairStyle.default,
+        hairStyleSelect.value
+    );
+
+    populateSelect(
+        outfitTypeSelect,
+        "-- Select Outfit Type --",
+        optionPools.outfitType[gender] || optionPools.outfitType.default,
+        outfitTypeSelect.value
+    );
+
+    populateSelect(
+        outfitStyleSelect,
+        "-- Select Outfit Style --",
+        optionPools.outfitStyle[gender] || optionPools.outfitStyle.default,
+        outfitStyleSelect.value
+    );
 }
 
 async function refreshPrompt() {
@@ -136,9 +269,7 @@ async function refreshPrompt() {
 
     const response = await fetch("/api/generate", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     });
 
@@ -154,6 +285,11 @@ function flashPill(pill) {
 
 form.addEventListener("input", refreshPrompt);
 form.addEventListener("change", refreshPrompt);
+
+genderSelect.addEventListener("change", async () => {
+    applyGenderAwareOptions();
+    await refreshPrompt();
+});
 
 copyBtn.addEventListener("click", async () => {
     await navigator.clipboard.writeText(generatedPrompt.value);
@@ -173,10 +309,44 @@ surpriseBtn.addEventListener("click", async () => {
         }
     });
 
+    applyGenderAwareOptions();
+
+    if (hairLengthSelect.options.length > 1) {
+        hairLengthSelect.value = randomItem(
+            Array.from(hairLengthSelect.options)
+                .slice(1)
+                .map((option) => option.value)
+        );
+    }
+
+    if (hairStyleSelect.options.length > 1) {
+        hairStyleSelect.value = randomItem(
+            Array.from(hairStyleSelect.options)
+                .slice(1)
+                .map((option) => option.value)
+        );
+    }
+
+    if (outfitTypeSelect.options.length > 1) {
+        outfitTypeSelect.value = randomItem(
+            Array.from(outfitTypeSelect.options)
+                .slice(1)
+                .map((option) => option.value)
+        );
+    }
+
+    if (outfitStyleSelect.options.length > 1) {
+        outfitStyleSelect.value = randomItem(
+            Array.from(outfitStyleSelect.options)
+                .slice(1)
+                .map((option) => option.value)
+        );
+    }
+
     await refreshPrompt();
 });
 
-clearBtn.addEventListener("click", async () => {
+clearBtn.addEventListener("click", () => {
     if (!confirm("Clear all fields and start fresh?")) return;
 
     Array.from(form.elements).forEach((el) => {
@@ -194,6 +364,8 @@ clearBtn.addEventListener("click", async () => {
             el.value = "";
         }
     });
+
+    applyGenderAwareOptions();
 
     generatedPrompt.value = "";
     generatedNegativePrompt.value = "";
@@ -237,17 +409,29 @@ document.querySelectorAll(".load-btn").forEach((button) => {
             "camera",
             "environment",
             "time_of_day",
-            "hair_length",
-            "hair_style",
-            "hair_color",
-            "outfit_type",
-            "outfit_style",
-            "outfit_color",
             "eye_color",
-            "expression"
+            "expression",
+            "hair_color",
+            "outfit_color"
         ];
 
         mappings.forEach((key) => {
+            const field = form.elements.namedItem(key);
+            if (field && prompt[key] !== undefined && prompt[key] !== null) {
+                field.value = prompt[key];
+            }
+        });
+
+        applyGenderAwareOptions();
+
+        const selectMappings = [
+            "hair_length",
+            "hair_style",
+            "outfit_type",
+            "outfit_style"
+        ];
+
+        selectMappings.forEach((key) => {
             const field = form.elements.namedItem(key);
             if (field && prompt[key] !== undefined && prompt[key] !== null) {
                 field.value = prompt[key];
@@ -260,4 +444,5 @@ document.querySelectorAll(".load-btn").forEach((button) => {
     });
 });
 
+applyGenderAwareOptions();
 refreshPrompt();

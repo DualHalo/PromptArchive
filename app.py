@@ -98,12 +98,23 @@ def compose_outfit(outfit_type: str, outfit_style: str, outfit_color: str) -> st
 
 
 def compose_subject(subject: str, gender: str) -> str:
-    if subject and gender:
-        return f"{gender.lower()} {subject}"
+    subject = clean_value(subject)
+    gender = clean_value(gender)
+
+    if gender == "Woman" and subject:
+        return f"an elegant female {subject}"
+    if gender == "Man" and subject:
+        return f"an elegant male {subject}"
+    if gender == "Non-binary" and subject:
+        return f"an elegant non-binary {subject}"
     if subject:
         return subject
-    if gender:
-        return gender.lower()
+    if gender == "Woman":
+        return "an elegant woman"
+    if gender == "Man":
+        return "an elegant man"
+    if gender == "Non-binary":
+        return "an elegant non-binary person"
     return ""
 
 
@@ -163,15 +174,13 @@ def build_prompt(data: dict[str, str]) -> str:
         opening_bits.append(shot_type.lower())
     opening_bits.append("image")
 
+    opening = " ".join(opening_bits)
     if subject_text:
-        opening = " ".join(opening_bits) + f" of {subject_text}"
-    else:
-        opening = " ".join(opening_bits)
-
+        opening += f" of {subject_text}"
     prompt_parts.append(opening)
 
     if subject_type:
-        prompt_parts.append(f"styled for a {subject_type.lower()} concept")
+        prompt_parts.append(f"built as a {subject_type.lower()} concept")
 
     if eye_color:
         prompt_parts.append(f"with {eye_color} eyes")
@@ -352,13 +361,22 @@ def build_negative_prompt(data: dict[str, str]) -> str:
 
     gender_negatives = {
         "woman": [
+            "man",
+            "male",
+            "masculine presentation",
             "masculine facial features",
             "masculine body proportions",
             "beard",
             "mustache",
+            "flat chest",
+            "menswear",
+            "tuxedo",
             "masculine hairstyle",
         ],
         "man": [
+            "woman",
+            "female",
+            "feminine presentation",
             "feminine facial features",
             "feminine body proportions",
             "dress",
@@ -367,7 +385,9 @@ def build_negative_prompt(data: dict[str, str]) -> str:
             "high heels",
             "cleavage",
             "breasts",
+            "lingerie",
             "feminine hairstyle",
+            "long feminine eyelashes",
         ],
         "non-binary": [],
     }

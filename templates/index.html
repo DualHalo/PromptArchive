@@ -11,7 +11,7 @@
         <header class="topbar">
             <div>
                 <p class="eyebrow">Separate first. Integrate later.</p>
-                <h1>PromptArchive <span>v1.2</span></h1>
+                <h1>PromptArchive <span>v1.4</span></h1>
                 <p class="subhead">Build prompts like a creative playground, then keep the ones worth reusing.</p>
             </div>
         </header>
@@ -78,7 +78,7 @@
 
                         <div class="field full">
                             <label for="subject">Subject Description</label>
-                            <input type="text" id="subject" name="subject" placeholder="e.g. confident business executive, fantasy warrior queen, luxury model">
+                            <input type="text" id="subject" name="subject" placeholder="e.g. business executive, fantasy warrior, luxury model">
                         </div>
 
                         <div class="field">
@@ -128,7 +128,7 @@
                         </div>
 
                         <div class="field">
-                            <label for="time_of_day">Time of day</label>
+                            <label for="time_of_day">Time of Day</label>
                             <select id="time_of_day" name="time_of_day">
                                 <option value="">-- Select Time of Day --</option>
                                 <option>early morning</option>
@@ -178,93 +178,44 @@
                                 <option>thoughtful expression</option>
                                 <option>candid laugh</option>
                             </select>
-                        </div>                        
+                        </div>
 
-                        <div class="field">
-                            <label for="hair_length">Hair length</label>
+                        <div class="field person-only">
+                            <label for="hair_length">Hair Length</label>
                             <select id="hair_length" name="hair_length">
                                 <option value="">-- Select Hair Length --</option>
-                                <option>short</option>
-                                <option>medium-length</option>
-                                <option>long</option>
                             </select>
                         </div>
 
-                        <div class="field">
+                        <div class="field person-only">
                             <label for="hair_style">Hairstyle</label>
                             <select id="hair_style" name="hair_style">
                                 <option value="">-- Select Hairstyle --</option>
-                                <option>sleek straight</option>
-                                <option>soft wavy</option>
-                                <option>loose curls</option>
-                                <option>tight curls</option>
-                                <option>messy bun</option>
-                                <option>high ponytail</option>
-                                <option>low ponytail</option>
-                                <option>side-swept layers</option>
-                                <option>romantic updo</option>
-                                <option>braided</option>
-                                <option>braid crown</option>
-                                <option>long layered blowout</option>
-                                <option>shoulder-length bob</option>
-                                <option>short textured bob</option>
-                                <option>pixie cut</option>
-                                <option>voluminous curls</option>
-                                <option>wet look styling</option>
                             </select>
                         </div>
 
-                        <div class="field">
-                            <label for="hair_color">Hair color</label>
-                            <input type="text" id="hair_color" name="hair_color" placeholder="e.g. dark brown with blonde highlights">
+                        <div class="field person-only">
+                            <label for="hair_color">Hair Color</label>
+                            <input type="text" id="hair_color" name="hair_color" placeholder="e.g. dark brown with soft highlights">
                         </div>
 
-                        <div class="field">
-                            <label for="outfit_type">Outfit type</label>
+                        <div class="field person-only">
+                            <label for="outfit_type">Outfit Type</label>
                             <select id="outfit_type" name="outfit_type">
                                 <option value="">-- Select Outfit Type --</option>
-                                <option>dress</option>
-                                <option>gown</option>
-                                <option>cocktail dress</option>
-                                <option>summer dress</option>
-                                <option>blazer ensemble</option>
-                                <option>business suit</option>
-                                <option>streetwear look</option>
-                                <option>casual outfit</option>
-                                <option>athletic wear</option>
-                                <option>swimsuit</option>
-                                <option>eveningwear</option>
-                                <option>lingerie-inspired outfit</option>
-                                <option>jacket and jeans</option>
-                                <option>luxury fashion outfit</option>
                             </select>
                         </div>
 
-                        <div class="field">
-                            <label for="outfit_style">Outfit style</label>
+                        <div class="field person-only">
+                            <label for="outfit_style">Outfit Style</label>
                             <select id="outfit_style" name="outfit_style">
                                 <option value="">-- Select Outfit Style --</option>
-                                <option>elegant</option>
-                                <option>glamorous</option>
-                                <option>editorial</option>
-                                <option>tailored</option>
-                                <option>cozy</option>
-                                <option>sporty</option>
-                                <option>chic</option>
-                                <option>edgy</option>
-                                <option>minimalist</option>
-                                <option>romantic</option>
-                                <option>luxury</option>
-                                <option>bohemian</option>
-                                <option>casual chic</option>
-                                <option>high fashion</option>
-                                <option>avant-garde</option>
                             </select>
                         </div>
 
-                        <div class="field">
-                            <label for="outfit_color">Outfit color</label>
-                            <input type="text" id="outfit_color" name="outfit_color" placeholder="e.g. black, blush pink, ivory">
+                        <div class="field person-only">
+                            <label for="outfit_color">Outfit Color</label>
+                            <input type="text" id="outfit_color" name="outfit_color" placeholder="e.g. black, charcoal, ivory">
                         </div>
                     </div>
 
@@ -322,21 +273,11 @@
                                 <p class="negative-snippet"><strong>Negative:</strong> {{ prompt["negative_prompt"] }}</p>
 
                                 <div class="chip-row">
-                                    {% if prompt["subject_type"] %}
-                                        <span class="chip">{{ prompt["subject_type"] }}</span>
-                                    {% endif %}
-                                    {% if prompt["gender"] %}
-                                        <span class="chip">{{ prompt["gender"] }}</span>
-                                    {% endif %}
-                                    {% if prompt["shot_type"] %}
-                                        <span class="chip">{{ prompt["shot_type"] }}</span>
-                                    {% endif %}
-                                    {% if prompt["locale"] %}
-                                        <span class="chip">{{ prompt["locale"] }}</span>
-                                    {% endif %}
-                                    {% if prompt["time_of_day"] %}
-                                        <span class="chip">{{ prompt["time_of_day"] }}</span>
-                                    {% endif %}
+                                    {% if prompt["subject_type"] %}<span class="chip">{{ prompt["subject_type"] }}</span>{% endif %}
+                                    {% if prompt["gender"] %}<span class="chip">{{ prompt["gender"] }}</span>{% endif %}
+                                    {% if prompt["shot_type"] %}<span class="chip">{{ prompt["shot_type"] }}</span>{% endif %}
+                                    {% if prompt["locale"] %}<span class="chip">{{ prompt["locale"] }}</span>{% endif %}
+                                    {% if prompt["time_of_day"] %}<span class="chip">{{ prompt["time_of_day"] }}</span>{% endif %}
                                 </div>
 
                                 <div class="card-actions">
