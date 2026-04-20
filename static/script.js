@@ -16,10 +16,10 @@ const genderSelect = document.getElementById("gender");
 
 const optionPools = {
     hairLength: {
-        default: ["short", "medium-length", "long"],
-        woman: ["medium-length", "long"],
-        man: ["short", "medium-length"],
-        "non-binary": ["short", "medium-length", "long"]
+        default: ["very short", "short", "medium-length", "long", "very long"],
+        woman: ["very short", "short", "medium-length", "long", "very long"],
+        man: ["bald", "buzzed", "very short", "short", "medium-length", "long", "very long"],
+        "non-binary": ["bald", "buzzed", "very short", "short", "medium-length", "long", "very long"]
     },
     hairStyle: {
         default: [
@@ -186,7 +186,23 @@ const surpriseSets = {
         "sunlit beach boardwalk"
     ],
     time_of_day: ["morning", "afternoon", "golden hour", "sunset", "night"],
+    age_range: ["18–24", "25–34", "35–44", "45–54", "55+"],
     eye_color: ["brown", "hazel", "green", "blue", "gray"],
+    skin_tone: [
+        "fair with cool undertones",
+        "light olive complexion",
+        "medium tan complexion",
+        "warm brown skin",
+        "deep brown skin"
+    ],
+    heritage_notes: [
+        "Latina features",
+        "Mediterranean facial structure",
+        "East Asian appearance",
+        "Afro-Caribbean features",
+        "mixed-race appearance"
+    ],
+    body_shape: ["slim", "lean", "athletic", "curvy", "soft hourglass", "broad-shouldered"],
     expression: [
         "soft smile",
         "confident expression",
@@ -305,7 +321,11 @@ surpriseBtn.addEventListener("click", async () => {
     Object.entries(surpriseSets).forEach(([fieldName, values]) => {
         const field = form.elements.namedItem(fieldName);
         if (field) {
-            field.value = randomItem(values);
+            if (field.tagName === "SELECT") {
+                field.value = randomItem(values);
+            } else {
+                field.value = randomItem(values);
+            }
         }
     });
 
@@ -313,33 +333,25 @@ surpriseBtn.addEventListener("click", async () => {
 
     if (hairLengthSelect.options.length > 1) {
         hairLengthSelect.value = randomItem(
-            Array.from(hairLengthSelect.options)
-                .slice(1)
-                .map((option) => option.value)
+            Array.from(hairLengthSelect.options).slice(1).map((option) => option.value)
         );
     }
 
     if (hairStyleSelect.options.length > 1) {
         hairStyleSelect.value = randomItem(
-            Array.from(hairStyleSelect.options)
-                .slice(1)
-                .map((option) => option.value)
+            Array.from(hairStyleSelect.options).slice(1).map((option) => option.value)
         );
     }
 
     if (outfitTypeSelect.options.length > 1) {
         outfitTypeSelect.value = randomItem(
-            Array.from(outfitTypeSelect.options)
-                .slice(1)
-                .map((option) => option.value)
+            Array.from(outfitTypeSelect.options).slice(1).map((option) => option.value)
         );
     }
 
     if (outfitStyleSelect.options.length > 1) {
         outfitStyleSelect.value = randomItem(
-            Array.from(outfitStyleSelect.options)
-                .slice(1)
-                .map((option) => option.value)
+            Array.from(outfitStyleSelect.options).slice(1).map((option) => option.value)
         );
     }
 
@@ -398,7 +410,7 @@ document.querySelectorAll(".load-btn").forEach((button) => {
 
         const prompt = data.prompt;
 
-        const mappings = [
+        const directMappings = [
             "title",
             "subject_type",
             "gender",
@@ -409,13 +421,17 @@ document.querySelectorAll(".load-btn").forEach((button) => {
             "camera",
             "environment",
             "time_of_day",
+            "age_range",
             "eye_color",
+            "skin_tone",
+            "heritage_notes",
+            "body_shape",
             "expression",
             "hair_color",
             "outfit_color"
         ];
 
-        mappings.forEach((key) => {
+        directMappings.forEach((key) => {
             const field = form.elements.namedItem(key);
             if (field && prompt[key] !== undefined && prompt[key] !== null) {
                 field.value = prompt[key];
@@ -424,14 +440,14 @@ document.querySelectorAll(".load-btn").forEach((button) => {
 
         applyGenderAwareOptions();
 
-        const selectMappings = [
+        const genderAwareMappings = [
             "hair_length",
             "hair_style",
             "outfit_type",
             "outfit_style"
         ];
 
-        selectMappings.forEach((key) => {
+        genderAwareMappings.forEach((key) => {
             const field = form.elements.namedItem(key);
             if (field && prompt[key] !== undefined && prompt[key] !== null) {
                 field.value = prompt[key];

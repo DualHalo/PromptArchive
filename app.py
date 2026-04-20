@@ -35,7 +35,11 @@ def init_db() -> None:
                 camera TEXT NOT NULL,
                 environment TEXT NOT NULL,
                 time_of_day TEXT NOT NULL,
+                age_range TEXT NOT NULL DEFAULT '',
                 eye_color TEXT NOT NULL DEFAULT '',
+                skin_tone TEXT NOT NULL DEFAULT '',
+                heritage_notes TEXT NOT NULL DEFAULT '',
+                body_shape TEXT NOT NULL DEFAULT '',
                 expression TEXT NOT NULL DEFAULT '',
                 hair_length TEXT NOT NULL,
                 hair_style TEXT NOT NULL,
@@ -62,7 +66,11 @@ def init_db() -> None:
             "gender": "ALTER TABLE prompts ADD COLUMN gender TEXT NOT NULL DEFAULT ''",
             "shot_type": "ALTER TABLE prompts ADD COLUMN shot_type TEXT NOT NULL DEFAULT ''",
             "locale": "ALTER TABLE prompts ADD COLUMN locale TEXT NOT NULL DEFAULT ''",
+            "age_range": "ALTER TABLE prompts ADD COLUMN age_range TEXT NOT NULL DEFAULT ''",
             "eye_color": "ALTER TABLE prompts ADD COLUMN eye_color TEXT NOT NULL DEFAULT ''",
+            "skin_tone": "ALTER TABLE prompts ADD COLUMN skin_tone TEXT NOT NULL DEFAULT ''",
+            "heritage_notes": "ALTER TABLE prompts ADD COLUMN heritage_notes TEXT NOT NULL DEFAULT ''",
+            "body_shape": "ALTER TABLE prompts ADD COLUMN body_shape TEXT NOT NULL DEFAULT ''",
             "expression": "ALTER TABLE prompts ADD COLUMN expression TEXT NOT NULL DEFAULT ''",
         }
 
@@ -129,7 +137,11 @@ def build_prompt(data: dict[str, str]) -> str:
     environment = clean_value(data.get("environment"))
     time_of_day = clean_value(data.get("time_of_day"))
 
+    age_range = clean_value(data.get("age_range"))
     eye_color = clean_value(data.get("eye_color"))
+    skin_tone = clean_value(data.get("skin_tone"))
+    heritage_notes = clean_value(data.get("heritage_notes"))
+    body_shape = clean_value(data.get("body_shape"))
     expression = clean_value(data.get("expression"))
 
     hair_length = clean_value(data.get("hair_length"))
@@ -151,7 +163,11 @@ def build_prompt(data: dict[str, str]) -> str:
             camera,
             environment,
             time_of_day,
+            age_range,
             eye_color,
+            skin_tone,
+            heritage_notes,
+            body_shape,
             expression,
             hair_length,
             hair_style,
@@ -182,8 +198,20 @@ def build_prompt(data: dict[str, str]) -> str:
     if subject_type:
         prompt_parts.append(f"built as a {subject_type.lower()} concept")
 
+    if age_range:
+        prompt_parts.append(f"age range {age_range}")
+
     if eye_color:
         prompt_parts.append(f"with {eye_color} eyes")
+
+    if skin_tone:
+        prompt_parts.append(f"with {skin_tone}")
+
+    if heritage_notes:
+        prompt_parts.append(f"featuring {heritage_notes}")
+
+    if body_shape:
+        prompt_parts.append(f"with a {body_shape} body shape")
 
     if expression:
         prompt_parts.append(f"showing a {expression}")
@@ -222,7 +250,12 @@ def build_negative_prompt(data: dict[str, str]) -> str:
     gender = clean_value(data.get("gender")).lower()
     shot_type = clean_value(data.get("shot_type")).lower()
     locale = clean_value(data.get("locale")).lower()
+
+    age_range = clean_value(data.get("age_range")).lower()
     eye_color = clean_value(data.get("eye_color")).lower()
+    skin_tone = clean_value(data.get("skin_tone")).lower()
+    heritage_notes = clean_value(data.get("heritage_notes")).lower()
+    body_shape = clean_value(data.get("body_shape")).lower()
     expression = clean_value(data.get("expression")).lower()
 
     other_values = [
@@ -244,7 +277,11 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         and not gender
         and not shot_type
         and not locale
+        and not age_range
         and not eye_color
+        and not skin_tone
+        and not heritage_notes
+        and not body_shape
         and not expression
         and not any(other_values)
     ):
@@ -359,6 +396,30 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         "stiff face",
     ]
 
+    age_negatives = [
+        "childlike features",
+        "baby face",
+        "age ambiguity",
+    ]
+
+    complexion_negatives = [
+        "washed-out skin",
+        "incorrect skin tone",
+        "inconsistent complexion",
+    ]
+
+    heritage_negatives = [
+        "inconsistent facial structure",
+        "mismatched ethnic features",
+        "conflicting facial features",
+    ]
+
+    body_shape_negatives = [
+        "inconsistent physique",
+        "distorted body shape",
+        "unnatural body proportions",
+    ]
+
     gender_negatives = {
         "woman": [
             "man",
@@ -436,9 +497,11 @@ def build_negative_prompt(data: dict[str, str]) -> str:
         "Chest-up": portrait_negatives,
         "Waist-up": three_quarter_negatives,
         "3/4 body": three_quarter_negatives,
-        "3/4 Body": three_quarter_negatives,
         "Full body": full_body_negatives,
-        "Full Body": full_body_negatives,
+        "Wide shot": full_body_negatives,
+        "Environmental portrait": three_quarter_negatives,
+        "Over-the-shoulder": portrait_negatives,
+        "Dynamic angle shot": three_quarter_negatives,
         "": [],
     }
 
@@ -451,6 +514,18 @@ def build_negative_prompt(data: dict[str, str]) -> str:
 
     if expression:
         combined.extend(expression_negatives)
+
+    if age_range:
+        combined.extend(age_negatives)
+
+    if skin_tone:
+        combined.extend(complexion_negatives)
+
+    if heritage_notes:
+        combined.extend(heritage_negatives)
+
+    if body_shape:
+        combined.extend(body_shape_negatives)
 
     for keyword, negatives in keyword_map.items():
         if keyword in subject:
@@ -507,7 +582,11 @@ def save_prompt():
         "camera": clean_value(request.form.get("camera")),
         "environment": clean_value(request.form.get("environment")),
         "time_of_day": clean_value(request.form.get("time_of_day")),
+        "age_range": clean_value(request.form.get("age_range")),
         "eye_color": clean_value(request.form.get("eye_color")),
+        "skin_tone": clean_value(request.form.get("skin_tone")),
+        "heritage_notes": clean_value(request.form.get("heritage_notes")),
+        "body_shape": clean_value(request.form.get("body_shape")),
         "expression": clean_value(request.form.get("expression")),
         "hair_length": clean_value(request.form.get("hair_length")),
         "hair_style": clean_value(request.form.get("hair_style")),
@@ -537,7 +616,11 @@ def save_prompt():
                 camera,
                 environment,
                 time_of_day,
+                age_range,
                 eye_color,
+                skin_tone,
+                heritage_notes,
+                body_shape,
                 expression,
                 hair_length,
                 hair_style,
@@ -549,7 +632,7 @@ def save_prompt():
                 negative_prompt,
                 created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 form_data["title"],
@@ -562,7 +645,11 @@ def save_prompt():
                 form_data["camera"],
                 form_data["environment"],
                 form_data["time_of_day"],
+                form_data["age_range"],
                 form_data["eye_color"],
+                form_data["skin_tone"],
+                form_data["heritage_notes"],
+                form_data["body_shape"],
                 form_data["expression"],
                 form_data["hair_length"],
                 form_data["hair_style"],

@@ -11,7 +11,7 @@
         <header class="topbar">
             <div>
                 <p class="eyebrow">Separate first. Integrate later.</p>
-                <h1>PromptArchive <span>v1.4</span></h1>
+                <h1>PromptArchive <span>v1.5</span></h1>
                 <p class="subhead">Build prompts like a creative playground, then keep the ones worth reusing.</p>
             </div>
         </header>
@@ -145,7 +145,23 @@
                             </select>
                         </div>
 
-                        <div class="field">
+                        <div class="field section-heading full">
+                            <h3>Appearance</h3>
+                        </div>
+
+                        <div class="field person-only">
+                            <label for="age_range">Age Range</label>
+                            <select id="age_range" name="age_range">
+                                <option value="">-- Select Age Range --</option>
+                                <option>18–24</option>
+                                <option>25–34</option>
+                                <option>35–44</option>
+                                <option>45–54</option>
+                                <option>55+</option>
+                            </select>
+                        </div>
+
+                        <div class="field person-only">
                             <label for="eye_color">Eye Color</label>
                             <select id="eye_color" name="eye_color">
                                 <option value="">-- Select Eye Color --</option>
@@ -161,7 +177,32 @@
                             </select>
                         </div>
 
-                        <div class="field">
+                        <div class="field person-only">
+                            <label for="skin_tone">Skin Tone / Complexion</label>
+                            <input type="text" id="skin_tone" name="skin_tone" placeholder="e.g. fair with cool undertones, olive-toned, medium brown skin">
+                        </div>
+
+                        <div class="field person-only">
+                            <label for="heritage_notes">Heritage / Facial Feature Notes</label>
+                            <input type="text" id="heritage_notes" name="heritage_notes" placeholder="e.g. Latina features, Mediterranean facial structure, East Asian appearance">
+                        </div>
+
+                        <div class="field person-only">
+                            <label for="body_shape">Body Shape</label>
+                            <select id="body_shape" name="body_shape">
+                                <option value="">-- Select Body Shape --</option>
+                                <option>slim</option>
+                                <option>lean</option>
+                                <option>athletic</option>
+                                <option>curvy</option>
+                                <option>soft hourglass</option>
+                                <option>broad-shouldered</option>
+                                <option>plus-size</option>
+                                <option>muscular</option>
+                            </select>
+                        </div>
+
+                        <div class="field person-only">
                             <label for="expression">Expression</label>
                             <select id="expression" name="expression">
                                 <option value="">-- Select Expression --</option>
@@ -275,6 +316,7 @@
                                 <div class="chip-row">
                                     {% if prompt["subject_type"] %}<span class="chip">{{ prompt["subject_type"] }}</span>{% endif %}
                                     {% if prompt["gender"] %}<span class="chip">{{ prompt["gender"] }}</span>{% endif %}
+                                    {% if prompt["age_range"] %}<span class="chip">{{ prompt["age_range"] }}</span>{% endif %}
                                     {% if prompt["shot_type"] %}<span class="chip">{{ prompt["shot_type"] }}</span>{% endif %}
                                     {% if prompt["locale"] %}<span class="chip">{{ prompt["locale"] }}</span>{% endif %}
                                     {% if prompt["time_of_day"] %}<span class="chip">{{ prompt["time_of_day"] }}</span>{% endif %}
