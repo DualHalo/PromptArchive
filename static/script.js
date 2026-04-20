@@ -1,3 +1,11 @@
+function debounce(fn, delay = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
+
 const form = document.getElementById("promptForm");
 const generatedPrompt = document.getElementById("generatedPrompt");
 const generatedNegativePrompt = document.getElementById("generatedNegativePrompt");
@@ -294,12 +302,14 @@ async function refreshPrompt() {
     generatedNegativePrompt.value = data.negative_prompt || "";
 }
 
+const debouncedRefreshPrompt = debounce(refreshPrompt, 300);
+
 function flashPill(pill) {
     pill.classList.add("show");
     window.setTimeout(() => pill.classList.remove("show"), 1200);
 }
 
-form.addEventListener("input", refreshPrompt);
+form.addEventListener("input", debouncedRefreshPrompt);
 form.addEventListener("change", refreshPrompt);
 
 genderSelect.addEventListener("change", async () => {
